@@ -1,0 +1,7 @@
+*.swp
+node_modules
+client/css/.sass-cache
+.DS_Store
+client/js/minified_app.js
+client/images/favicons
+*.psd

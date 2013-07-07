@@ -1,0 +1,37 @@
+{
+    "name": "NodeWeb",
+    "preferGlobal": "true",
+    "version": "0.0.1",
+    "author": "Sean McGary <sean@seanmcgary.com>",
+    "description": "NodeWeb - Simple NodeJS web framework built with ExpressJS",
+    "contributors": [
+        {
+            "name": "Sean McGary",
+            "email": "sean@seanmcgary.com"
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:seanmcgary/nodeweb"
+    },
+    "dependencies" : {
+        "express": "*",
+        "async": "*",
+        "underscore": "*",
+        "mongodb": "*",
+        "node_mongodb_wrapper": "*",
+        "redis": "*",
+        "optimist": "*",
+        "connect-redis": "*",
+        "colors": "*",
+        "bcrypt": "*",
+        "nodemailer": "*",
+        "uglify-js": "*",
+        "connect": "*",
+        "hashlib2": "*"
+    },
+    "license": "MIT",
+    "engine": {
+        "node": ">=0.10.12"
+    }
+}
