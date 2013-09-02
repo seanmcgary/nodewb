@@ -61,7 +61,7 @@ var init = function(application, $){
 		hideLoading: function(ref){
 			ref.find('.loading').css('display', 'none');
 		},
-		format_datetime: function(datetime){
+		formatDatetime: function(datetime){
             var self = this;
 
             var date = new Date(datetime);
@@ -110,6 +110,14 @@ var init = function(application, $){
 
 		},
 	});
+
+	application.navigate = function(href){
+		application.controller.prototype.navigate(href, { trigger: true });
+	};
+
+	application.replaceRoute = function(href){
+		application.controller.prototype.navigate(href, { trigger: false, replace: true });
+	};
 
 	new application.controller();
 

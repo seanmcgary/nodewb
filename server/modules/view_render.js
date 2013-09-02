@@ -227,6 +227,9 @@ var view_render = function(){
             var self = this;
 
             self.views = views;
+        },
+        setJsFilePaths: function(files){
+            this.clientJsFiles = files;
         }
     };
 };

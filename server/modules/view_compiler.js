@@ -95,6 +95,41 @@ var view_compiler = function(views){
 
 			return payload;
 
+		},
+		generateClientJsFiles: function(){		
+
+			var views = [];
+			var models = [];
+
+			var parseDir = function(path, listRef){
+
+				var dir = fs.readdirSync(path);
+				_.each(dir, function(item){
+					var itemPath = path + '/' + item;
+
+					var stat = fs.statSync(itemPath);
+
+					if(stat.isDirectory()){
+						parseDir(itemPath, listRef);
+					} else {
+						listRef.push(itemPath.replace(main.config.static, ''));
+					}
+				});
+
+			};
+
+			var viewPath = path.normalize(config.static + '/js/views');
+			parseDir(viewPath, views);
+			views = _.sortBy(views, function(view){ return view; });
+
+
+			var modelPath = path.normalize(config.static + '/js/models');
+			parseDir(modelPath, models);
+			models = _.sortBy(models, function(model){ return model; });
+
+
+			return models.concat(views);
+
 		}
 	}
 };

@@ -50,9 +50,11 @@ var create_app = module.exports.create_app = function(){
     var view_render = new _view_render();
 
     var views = exports.views = view_compiler.compile();
+    var clientJsFileList = view_compiler.generateClientJsFiles();
 
     view_render.set_viewpath(config.views);
     view_render.set_views(views.views);
+    view_render.setJsFilePaths(clientJsFileList);
 
     module.exports.view_render = view_render;
 
