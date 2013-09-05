@@ -78,7 +78,7 @@ var development = {
 
     // -- redis configuration
     redis_db                : 5,
-    redis_pass              : 'rids899*baby',
+    redis_pass              : '',
     redis_host              : '127.0.0.1',
     redis_prefix            : 'something',
     redis_port              : 6379,
@@ -86,24 +86,6 @@ var development = {
     cookie_domain           : 'localhost',
     base_url                : 'http://localhost:9000',
     numCPUs                 : 1,
-};
-
-var staging = {
-    // -- mongodb configuration
-    mongodb_database        : '',
- 
-    // -- redis configuration
-    redis_pass              : '',
-    redis_host              : '127.0.0.1',
-    redis_db                : 3,
-    redis_prefix            : '',
-
-    // -- express configuration
-    express_port            : 9003,
-    google_analytics        : '',
-    cookie_domain           : '',
-    base_url                : '',
-    es_cluster_name         : '',
 };
 
 var production = {
@@ -126,6 +108,5 @@ var production = {
 
 exports.base            = base;
 exports.development     = _.extend(_.clone(base), development);
-exports.staging         = _.extend(_.clone(base), staging);
 exports.production      = _.extend(_.clone(base), production);
 
