@@ -1,10 +1,4 @@
-/**
- * Created by JetBrains PhpStorm.
- * User: seanmcgary
- * Date: 7/27/12
- * Time: 8:50 PM
- * To change this template use File | Settings | File Templates.
- */
+
 var express         = require('express'),
     _               = require('underscore'),
     router          = require('./router.js').router,

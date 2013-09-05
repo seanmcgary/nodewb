@@ -1,10 +1,4 @@
-/**
- * Created by JetBrains PhpStorm.
- * User: seanmcgary
- * Date: 8/9/12
- * Time: 9:53 PM
- * To change this template use File | Settings | File Templates.
- */
+
 
 var _       = require('underscore'),
     fs      = require('fs'),

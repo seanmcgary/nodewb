@@ -1,11 +1,3 @@
-/**
- * Created by JetBrains PhpStorm.
- * User: seanmcgary
- * Date: 7/29/12
- * Time: 11:14 PM
- * To change this template use File | Settings | File Templates.
- */
-
 var path    = require('path'),
     _       = require('underscore');
 
