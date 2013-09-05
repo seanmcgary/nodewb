@@ -3,46 +3,46 @@ var fs 			= require('fs'),
 	path 		= require('path'),
 	main		= require.main.exports;
 
-var view_compiler = function(views){
+var viewCompiler = function(views){
 
-	var view_file_list = {};
-	var view_files = {};
+	var viewFileList = {};
+	var viewFiles = {};
 
 	var LINE_END = "\n",
-		view_string = 'var __views = {}' + LINE_END;
+		viewString = 'var __views = {}' + LINE_END;
 
-	var parse_dir = function(dir){
+	var parseDir = function(dir){
 		var base = "/" + dir.replace(views, "");
 
-		var dir_files = fs.readdirSync(dir);
+		var dirFiles = fs.readdirSync(dir);
 
 
-		for(var i in dir_files){
-			var file_stat = fs.statSync(dir + '/' + dir_files[i]);
+		for(var i in dirFiles){
+			var fileStat = fs.statSync(dir + '/' + dirFiles[i]);
 
-			if(file_stat.isDirectory()){
-				parse_dir(dir + '/' + dir_files[i]);
+			if(fileStat.isDirectory()){
+				parseDir(dir + '/' + dirFiles[i]);
 			} else {
-				var file =  dir_files[i].replace(/^\/+/, "");
+				var file =  dirFiles[i].replace(/^\/+/, "");
 				var _base = ((base == '/') ? file : base + '/' + file).replace(/(\.(html|ejs|js))+$/, '');
 
 				_base = _base.replace(/^\/+/, '');
 
-				view_file_list[_base] = dir + '/' + dir_files[i];
+				viewFileList[_base] = dir + '/' + dirFiles[i];
 			}
 		}
 	};
 
-	var compile_views = function(){
+	var compileViews = function(){
 
-		_.each(view_file_list, function(val, index, list){
+		_.each(viewFileList, function(val, index, list){
 			var file = fs.readFileSync(val);
 
-			parse_partials(file.toString(), index);
+			parsePartials(file.toString(), index);
 		});
 	};
 
-	var parse_partials = function(file, fileIndex){
+	var parsePartials = function(file, fileIndex){
 		var fileByLines = file.split('\n');
 
 		var partials = file.match(/^##\s*(.*)$/mg);
@@ -73,9 +73,9 @@ var view_compiler = function(views){
 			}
 
 			var partialName = fileIndex + '/' + partial.replace('## ', '');
-			view_files[partialName] = _.template(currentTemplate);
+			viewFiles[partialName] = _.template(currentTemplate);
 
-			view_string += '__views["' + partialName + '"] = ' + (view_files[partialName].source + LINE_END);
+			viewString += '__views["' + partialName + '"] = ' + (viewFiles[partialName].source + LINE_END);
 
 		});
 	};
@@ -84,13 +84,13 @@ var view_compiler = function(views){
 		compile: function(){
 			var self = this;
 
-			parse_dir(views);
+			parseDir(views);
 
-			compile_views();
+			compileViews();
 
 			var payload = {
-				views: view_files,
-				compiled_views: view_string
+				views: viewFiles,
+				compiledViews: viewString
 			};
 
 			return payload;
@@ -134,4 +134,4 @@ var view_compiler = function(views){
 	}
 };
 
-exports.view_compiler = view_compiler;
+module.exports = viewCompiler

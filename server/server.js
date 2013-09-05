@@ -11,7 +11,7 @@ var express         = require('express'),
     redis_store     = require('connect-redis')(express),
     redis           = require('redis'),
     _config         = require('./config/config.js'),
-    _view_render    = require('./modules/view_render.js'),
+    _viewRender    = require('./modules/viewRender.js'),
     async           = require('async'),
     optimist        = require('optimist').argv,
     fs              = require('fs'),
@@ -46,17 +46,18 @@ var cache;
 var create_app = module.exports.create_app = function(){
     module.exports.config = config;
     
-    var view_compiler = new require('./modules/view_compiler.js').view_compiler(config.views);
-    var view_render = new _view_render();
+    var viewCompiler = new require('./modules/viewCompiler')(config.views);
+    var viewRender = new _viewRender();
 
-    var views = exports.views = view_compiler.compile();
-    var clientJsFileList = view_compiler.generateClientJsFiles();
+    var views = exports.views = viewCompiler.compile();
+    var clientJsFileList = viewCompiler.generateClientJsFiles();
 
-    view_render.set_viewpath(config.views);
-    view_render.set_views(views.views);
-    view_render.setJsFilePaths(clientJsFileList);
+    viewRender.setData({
+        views: views.views,
+        clientJsFiles: clientJsFileList
+    });
 
-    module.exports.view_render = view_render;
+    module.exports.viewRender = viewRender;
 
     module.exports.models = require('./modules/models');
     module.exports.cache  = cache;
@@ -99,7 +100,7 @@ var create_app = module.exports.create_app = function(){
         app.use(app.router);
 
         app.response.viewPath = __dirname + config.views;
-        app.response.view_render = view_render;
+        app.response.viewRender = viewRender;
         app.request.config = config;
     });
 

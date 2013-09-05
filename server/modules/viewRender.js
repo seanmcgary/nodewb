@@ -11,20 +11,19 @@ var _       = require('underscore'),
     async   = require('async'),
     main    = require.main.exports;
 
-var view_render = function(){
+var viewRender = function(){
 
-    var view_path = '';
-    var application_template = 'application.ejs';
+    var applicationTemplate = 'application.ejs';
     var req = null;
 
     var months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
-    var short_months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+    var shortMonths = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 
     return {
         months: [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ],
-        short_months: [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ],
+        shortMonths: [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ],
         config: main.config,
-        is_logged_in: function(){
+        isLoggedIn: function(){
             var self = this;
 
             if(typeof self.req.session.user !== 'undefined' && self.req.session.user !== null){
@@ -40,21 +39,7 @@ var view_render = function(){
 
             return 'http://gravatar.com/avatar/' + user.gravatar + '?s=' + size + '&d=mm';
         },
-        format_blog_link: function(blog, user){
-            if((user.plan == 'professional' || user.plan == 'plus') && blog.cname !== null && blog.cname.length){
-                return 'http://' + blog.cname + '/';
-            } else {
-                return 'http://' + blog.url + '.scribbbl.es';
-            }
-        },
-        format_post_link: function(blog, post){
-            if(blog.cname !== null && blog.cname.length){
-                return 'http://' + blog.cname + '/' + post.url;
-            }
-
-            return 'http://' + blog.url + '.scribbbl.es/' + post.url; 
-        },
-        format_unix_date: function(date){
+        formatUnixDate: function(date){
             var self = this;
 
             date = new Date(date * 1000);
@@ -74,9 +59,9 @@ var view_render = function(){
                 hours -= 12;
             }
 
-            return short_months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear() + " at " + hours + ":" + minutes + " " + meridian;
+            return shortMonths[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear() + " at " + hours + ":" + minutes + " " + meridian;
         },
-        format_datetime: function(datetime){
+        formatDatetime: function(datetime){
             var self = this;
 
             var date = new Date(datetime);
@@ -96,18 +81,15 @@ var view_render = function(){
                 hours -= 12;
             }
 
-            return short_months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear() + " at " + hours + ":" + minutes + " " + meridian;
+            return shortMonths[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear() + " at " + hours + ":" + minutes + " " + meridian;
         },
-        format_short_date: function(datetime){
+        formatShortDate: function(datetime){
             var self = this;
 
             var date = new Date(datetime);
 
-            return short_months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
+            return shortMonths[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
 
-        },
-        content_preview: function(content){
-            
         },
         render: function(view, data, callback){
             var self = this,
@@ -122,7 +104,7 @@ var view_render = function(){
             }
 
         },
-        render_sync: function(view, data){
+        renderSync: function(view, data){
             var self = this,
                 scope = _.extend(self, data);
 
@@ -135,7 +117,7 @@ var view_render = function(){
             }
 
         },
-        render_app: function(view, data, callback){
+        renderApp: function(view, data, callback){
             var self = this;
 
             if(typeof data === 'function'){
@@ -156,6 +138,7 @@ var view_render = function(){
             };
 
             var get_data = {};
+            
             // get any data necessary
 
             async.parallel(get_data, function(err, result){
@@ -166,7 +149,7 @@ var view_render = function(){
                 return callback(null, app_container);
             });
         },
-        render_app_only: function(data, callback){
+        renderAppOnly: function(data, callback){
             var self = this;
 
             if(typeof data === 'function'){
@@ -176,17 +159,7 @@ var view_render = function(){
 
             var application = 'application/layout';
 
-            var public_user_fields = ['username', 'full_name', 'user_id', 'headline_display', 'account_type'];
-
-            var user_data = {};
-            if(self.req.session && self.req.session.user){
-                _.each(public_user_fields, function(field){
-                    user_data[field] = self.req.session.user[field];
-                });
-            }
-
             var cfg = {
-                fb_app_id: self.req.config.facebook.app_id,
                 base_url: self.req.config.base_url,
                 site_title: self.req.config.site_title,
                 site_description: self.req.config.site_description
@@ -211,22 +184,12 @@ var view_render = function(){
                 return callback(null, app_container);
             });
         },
-        set_viewpath: function(path){
-            view_path = path + '/';
-        },
-        set_app_template: function(tmpl_name){
-            application_template = tmpl_name;
-        },
-        set_server_data: function(req, res){
+        setData: function(data){
             var self = this;
 
-            self.req = req;
-            self.res = res;
-        },
-        set_views: function(views){
-            var self = this;
-
-            self.views = views;
+            _.each(data, function(val, key){
+                self[key] = val;
+            });
         },
         setJsFilePaths: function(files){
             this.clientJsFiles = files;
@@ -234,4 +197,4 @@ var view_render = function(){
     };
 };
 
-module.exports = view_render;
+module.exports = viewRender;
