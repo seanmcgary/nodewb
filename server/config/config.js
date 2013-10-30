@@ -20,7 +20,7 @@ var base = {
     cookie_domain           : 'localhost',
 
     // -- express configuration
-    views                   : path.normalize(__dirname + '/../views'),
+    views                   : path.normalize(__dirname + '/../../templates'),
     static                  : path.normalize(__dirname + '/../../client'),
     express_port            : 9000,
 

@@ -28,7 +28,8 @@
         "nodemailer": "*",
         "uglify-js": "*",
         "connect": "*",
-        "hashlib2": "*"
+        "hashlib2": "*",
+		"q": "*"
     },
     "license": "MIT",
     "engine": {

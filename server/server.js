@@ -146,7 +146,7 @@ server.use(function(req, res, next){
 // ----------------------------------------------------------------------------
 // ROUTES
 // ----------------------------------------------------------------------------
-server.get('/view_templates.js', function(req, res){
+server.get('/viewTemplates.js', function(req, res){
     res.set('Content-Type', 'text/javascript');
     res.send(views.compiled_views);
 });
