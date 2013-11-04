@@ -1,8 +1,9 @@
 
-var _           = require("underscore"),
-    main        = require.main.exports,
-    mongo       = require('node_mongodb_wrapper'),
-    eventEmitter = require('events').EventEmitter;
+var _ = require("underscore"),
+    main = require.main.exports,
+    mongo = require('mongodb-wrapper'),
+    eventEmitter = require('events').EventEmitter,
+    async = require('async');
 
 
 var formatter = (function(){
@@ -11,7 +12,7 @@ var formatter = (function(){
     self = Object.create(eventEmitter.prototype);
 
     self.trigger = function(event, err, data, callback){
-        if(!err && event in self._events){
+        if(!err && events[event]){
             return self.emit(event, err, data, callback);
         } else {
             return callback(err, data);
@@ -20,7 +21,7 @@ var formatter = (function(){
 
     // put events here
     var events = {
-
+        
     };
 
     // register events
@@ -45,7 +46,6 @@ var baseModel = function(){
     return {
         config: main.config,
         db: db,
-        hash: hash,
         ObjectId: function(id){
             if(typeof id === 'undefined'){
                 return mongo.ObjectID();
@@ -57,22 +57,6 @@ var baseModel = function(){
                 }
 
                 return id;                
-            }
-        },
-        dateComponents: function(date){
-            if(typeof date === 'undefined'){
-                date = new Date();
-            } else {
-                date = new Date(date);    
-            }
-
-            return {
-                day: date.getUTCDate(),
-                month: date.getUTCMonth() + 1,
-                year: date.getUTCFullYear(),
-                hours: date.getUTCHours(),
-                minutes: date.getUTCMinutes(),
-                seconds: date.getUTCSeconds(),
             }
         },
         /* 
@@ -207,7 +191,6 @@ var baseModel = function(){
         createNew: function(params, callback){
             var self = this;
 
-
             if(!params.collection){
                 return callback(true, 'No collection provided');
             }
@@ -217,7 +200,6 @@ var baseModel = function(){
             }
 
             var options = _.extend({
-                query: {},
                 options: {},
                 upsert: false
             }, params);
@@ -225,12 +207,18 @@ var baseModel = function(){
             db.collection(options.collection);
             db[options.collection].save(options.data, function(err, doc){
                 if(!err){
-                    if(options.upsert && data._id){
+                    if(options.upsert && options.data._id){
                         return self._findOne({
-                            query: { _id: self.ObjectId(data._id) },
+                            query: { _id: self.ObjectId(options.data._id) },
                             collection: options.collection,
                             event: options.event
-                        }, callback);
+                        }, function(err, data){
+                            if(!err){
+                                return formatter.trigger(options.event, null, data, callback);
+                            } else {
+                                return callback(true, data);
+                            }
+                        });
                     } else {
                         return callback(null, doc);
                     }
@@ -256,8 +244,8 @@ var baseModel = function(){
             }
             
 
-            if('order_by' in options){
-                query.sort(options.order_by);
+            if(options.orderBy){
+                query.sort(options.orderBy);
             }
 
             if('offset' in options){
@@ -286,15 +274,32 @@ var baseModel = function(){
                 }
             });
         },
-        remove: function(params, callback){
+        distinct: function(params, callback){
             var self = this;
 
             if(!params.collection){
                 return callback(true, 'No collection provided');
             }
 
-            if(!params.data){
-                return callback(true, 'No data provided');
+            var options = _.extend({
+                query: {},
+                key: ''
+            }, params);
+
+            db.collection(options.collection);
+            db[options.collection].distinct(options.key, options.query, function(err, res){
+                if(!err){
+                    callback(null, res);
+                } else {
+                    callback(true, res);
+                }
+            });
+        },
+        remove: function(params, callback){
+            var self = this;
+
+            if(!params.collection){
+                return callback(true, 'No collection provided');
             }
 
             var options = _.extend({

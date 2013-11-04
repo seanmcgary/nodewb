@@ -19,7 +19,7 @@
         "async": "*",
         "underscore": "*",
         "mongodb": "*",
-        "node_mongodb_wrapper": "*",
+        "mongodb-wrapper": "*",
         "redis": "*",
         "optimist": "*",
         "connect-redis": "*",
@@ -29,7 +29,8 @@
         "uglify-js": "*",
         "connect": "*",
         "hashlib2": "*",
-		"q": "*"
+		"q": "*",
+        "node-partials": "*"
     },
     "license": "MIT",
     "engine": {

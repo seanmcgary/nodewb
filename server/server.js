@@ -1,18 +1,19 @@
 
-var express         = require('express'),
-    _               = require('underscore'),
-    redis_store     = require('connect-redis')(express),
-    redis           = require('redis'),
-    _config         = require('./config/config.js'),
-    _viewRender    = require('./modules/viewRender.js'),
-    async           = require('async'),
-    optimist        = require('optimist').argv,
-    fs              = require('fs'),
-    colors          = require('colors'),
-    cluster         = require('cluster'),
-    connect         = require('connect'),
-    mongo           = require('node_mongodb_wrapper'),
-    logger          = require('./modules/logger');
+var express = require('express'),
+    _ = require('underscore'),
+    redis_store = require('connect-redis')(express),
+    redis = require('redis'),
+    _config = require('./config/config.js'),
+    _viewRender = require('./modules/viewRender.js'),
+    async = require('async'),
+    optimist = require('optimist').argv,
+    fs = require('fs'),
+    colors = require('colors'),
+    cluster = require('cluster'),
+    connect = require('connect'),
+    logger = require('./modules/logger'),
+    partials = require('node-partials'),
+    utils = require('./modules/utils');
 
 var env;
 
@@ -35,11 +36,17 @@ config.env = env;
 module.exports.logger = logger;
 module.exports.config = config;
 
-var viewCompiler = new require('./modules/viewCompiler')(config.views);
 var viewRender = new _viewRender();
 
-var views = exports.views = viewCompiler.compile();
-var clientJsFileList = viewCompiler.generateClientJsFiles();
+partials = new partials();
+
+var templates = partials.compile(config.views);
+var views = exports.views = {
+    views: templates,
+    compiledViews: partials.serializeTemplates(templates)
+};
+
+var clientJsFileList = utils.generateClientJsFiles(config.static + '/js');
 
 viewRender.setData({
     views: views.views,
